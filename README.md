@@ -6,7 +6,16 @@
   }
   h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+  }
+  .logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .logo-container img {
+    max-width: 200px;
+    height: auto;
+    cursor: pointer;
   }
   table {
     width: 100%;
@@ -27,6 +36,10 @@
     background-color: #eef3f7;
   }
 </style>
+
+<div class="logo-container">
+  <img src="/mnt/data/ShyamalaLogo-14 (1).png" alt="Sangeet Shyamala Logo" onclick="changeLogo()">
+</div>
 
 <h1>Sangeet Shyamala Course Schedule</h1>
 <input type="text" id="searchBox" placeholder="Search for a course..." onkeyup="searchCourse()" style="padding:10px;width:300px;margin-bottom:20px;">
@@ -72,6 +85,21 @@ function addNewRow() {
     <td><button onclick="alert('Changes saved!')">Save</button></td>
   `;
   table.appendChild(newRow);
+}
+
+function changeLogo() {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      document.querySelector(".logo-container img").src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  fileInput.click();
 }
 
 const courseData = [
