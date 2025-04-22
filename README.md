@@ -26,9 +26,6 @@
   tr:hover {
     background-color: #eef3f7;
   }
-  .highlight {
-    background-color: #ffe58f !important;
-  }
 </style>
 
 <h1>Sangeet Shyamala Course Schedule</h1>
@@ -65,7 +62,6 @@ function searchCourse() {
 function addNewRow() {
   const table = document.getElementById("tableBody");
   const newRow = document.createElement("tr");
-  newRow.classList.add("highlight");
   newRow.innerHTML = `
     <td contenteditable="true">New Course</td>
     <td contenteditable="true">Instructor</td>
