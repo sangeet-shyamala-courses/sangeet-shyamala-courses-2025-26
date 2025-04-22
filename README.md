@@ -3,6 +3,7 @@
     background: linear-gradient(to right, #f0f2f5, #d9e2ec);
     font-family: Arial, sans-serif;
     padding: 20px;
+    transition: background-color 0.5s ease;
   }
   h1 {
     text-align: center;
@@ -35,6 +36,25 @@
   tr:hover {
     background-color: #eef3f7;
   }
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .gallery-card {
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    text-align: center;
+  }
+  .theme-selector {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 </style>
 
 <div class="logo-container">
@@ -42,6 +62,24 @@
 </div>
 
 <h1>Sangeet Shyamala Course Schedule</h1>
+
+<div class="theme-selector">
+  <label for="bgColorPicker">Choose Background Color:</label>
+  <input type="color" id="bgColorPicker" onchange="document.body.style.background = this.value">
+  <br><br>
+  <button onclick="setTheme('light')">Light</button>
+  <button onclick="setTheme('pastel')">Pastel</button>
+  <button onclick="setTheme('dark')">Dark</button>
+</div>
+
+<div class="gallery">
+  <div class="gallery-card">🎵 Music Classes</div>
+  <div class="gallery-card">💃 Dance Classes</div>
+  <div class="gallery-card">🧘 Fitness Classes</div>
+  <div class="gallery-card">🎨 Art Classes</div>
+  <div class="gallery-card">✍️ Writing Classes</div>
+</div>
+
 <input type="text" id="searchBox" placeholder="Search for a course..." onkeyup="searchCourse()" style="padding:10px;width:300px;margin-bottom:20px;">
 <button onclick="addNewRow()" style="padding:10px 20px;margin-left:10px;">Add New Row</button>
 
@@ -100,6 +138,16 @@ function changeLogo() {
     reader.readAsDataURL(file);
   };
   fileInput.click();
+}
+
+function setTheme(theme) {
+  if (theme === 'light') {
+    document.body.style.background = 'linear-gradient(to right, #ffffff, #f2f2f2)';
+  } else if (theme === 'pastel') {
+    document.body.style.background = 'linear-gradient(to right, #f8e1f4, #e0f7fa)';
+  } else if (theme === 'dark') {
+    document.body.style.background = 'linear-gradient(to right, #1f1f1f, #333)';
+  }
 }
 
 const courseData = [
