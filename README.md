@@ -1,6 +1,7 @@
 <style>
   body {
-    background: linear-gradient(to right, #f0f2f5, #d9e2ec);
+    background: url('/mnt/data/colourful-ombre-background-blue-purple_218148-757.avif') no-repeat center center fixed;
+    background-size: cover;
     font-family: Arial, sans-serif;
     padding: 20px;
     transition: background-color 0.5s ease;
@@ -17,6 +18,22 @@
     max-width: 200px;
     height: auto;
     cursor: pointer;
+  }
+  .category-menu {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+  .category-menu span {
+    margin: 0 10px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+  .category-menu span:hover {
+    background: rgba(255,255,255,1);
   }
   table {
     width: 100%;
@@ -36,25 +53,6 @@
   tr:hover {
     background-color: #eef3f7;
   }
-  .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-  }
-  .gallery-card {
-    padding: 15px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    min-width: 180px;
-    text-align: center;
-  }
-  .theme-selector {
-    text-align: center;
-    margin-bottom: 20px;
-  }
 </style>
 
 <div class="logo-container">
@@ -63,21 +61,17 @@
 
 <h1>Sangeet Shyamala Course Schedule</h1>
 
-<div class="theme-selector">
-  <label for="bgColorPicker">Choose Background Color:</label>
-  <input type="color" id="bgColorPicker" onchange="document.body.style.background = this.value">
-  <br><br>
-  <button onclick="setTheme('light')">Light</button>
-  <button onclick="setTheme('pastel')">Pastel</button>
-  <button onclick="setTheme('dark')">Dark</button>
+<div class="category-menu">
+  <span onclick="filterCategory('music')">🎵 Music Classes</span>
+  <span onclick="filterCategory('dance')">💃 Dance Classes</span>
+  <span onclick="filterCategory('fitness')">🧘 Fitness Classes</span>
+  <span onclick="filterCategory('art')">🎨 Art Classes</span>
+  <span onclick="filterCategory('writing')">✍️ Writing Classes</span>
 </div>
 
-<div class="gallery">
-  <div class="gallery-card">🎵 Music Classes</div>
-  <div class="gallery-card">💃 Dance Classes</div>
-  <div class="gallery-card">🧘 Fitness Classes</div>
-  <div class="gallery-card">🎨 Art Classes</div>
-  <div class="gallery-card">✍️ Writing Classes</div>
+<div style="text-align:center; margin-bottom: 20px;">
+  <label for="bgColorPicker">Change Background Color:</label>
+  <input type="color" id="bgColorPicker" onchange="document.body.style.backgroundColor = this.value">
 </div>
 
 <input type="text" id="searchBox" placeholder="Search for a course..." onkeyup="searchCourse()" style="padding:10px;width:300px;margin-bottom:20px;">
@@ -92,11 +86,11 @@
       <th>Time</th>
       <th>Fee</th>
       <th>Room No.</th>
+      <th>Type</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody id="tableBody">
-    <!-- Course rows are editable and can be extended dynamically -->
   </tbody>
 </table>
 
@@ -120,6 +114,7 @@ function addNewRow() {
     <td contenteditable="true">Time</td>
     <td contenteditable="true">Fee</td>
     <td contenteditable="true">Room No.</td>
+    <td contenteditable="true">Group/Individual</td>
     <td><button onclick="alert('Changes saved!')">Save</button></td>
   `;
   table.appendChild(newRow);
@@ -140,33 +135,39 @@ function changeLogo() {
   fileInput.click();
 }
 
-function setTheme(theme) {
-  if (theme === 'light') {
-    document.body.style.background = 'linear-gradient(to right, #ffffff, #f2f2f2)';
-  } else if (theme === 'pastel') {
-    document.body.style.background = 'linear-gradient(to right, #f8e1f4, #e0f7fa)';
-  } else if (theme === 'dark') {
-    document.body.style.background = 'linear-gradient(to right, #1f1f1f, #333)';
-  }
+function filterCategory(type) {
+  const rows = document.querySelectorAll("#tableBody tr");
+  rows.forEach(row => {
+    const course = row.cells[0]?.textContent.toLowerCase() || "";
+    const matches = {
+      music: /vocal|tabla|piano|sitar|voice/.test(course),
+      dance: /dance|ballet|kathak|odissi|bharatnatyam|salsa/.test(course),
+      fitness: /fitness|yoga|karate|zumba/.test(course),
+      art: /painting|sculpture|art/.test(course),
+      writing: /writing/.test(course),
+    };
+    row.style.display = matches[type] ? "" : "none";
+  });
 }
 
 const courseData = [
-  ["Bharatnatyam", "Meenakshi Rao", "Saturday, Sunday", "8:30 to 10:30am, 9:30 to 11:30am, 11:00 to 12:00pm", "₹2800 (8 classes/month)", "Room 101"],
-  ["Hindustani Vocal", "Akansha", "Sat & Sun", "10:00 to 11:00am", "₹3000, ₹1200/hr (individual)", "Room 102"],
-  ["Dance Fitness", "Ajay Soni", "Mon, Wed, Fri", "6:15 to 7:15pm", "₹3500 (8 classes), ₹4500 (12 classes)", "Room 103"],
-  ["Yoga", "—", "Tues & Thurs", "6:00 to 7:00pm", "₹3000 (8 classes/month)", "Room 104"],
-  ["Karate", "Tarun Chakravarty", "Mon & Thurs", "5:00 to 6:00pm", "₹2000 (8 classes/month)", "Room 105"],
-  ["Creative Writing", "Kiran Mishra", "Saturday, Sunday", "11:00 to 12:00pm, 3:00 to 4:00pm", "₹2000 (4 classes), ₹700/hr, ₹1000/hr", "Room 106"],
-  ["Tabla", "Bijoy Mandal", "Wed & Fri, Sat", "5:00 to 6:00pm, 10:30 to 12:00pm", "₹2000, ₹4500 (8 classes/month)", "Room 107"],
-  ["Ballet", "Komal", "Thurs & Sat", "4:00 to 5:00pm, 5:00 to 6:00pm", "₹3000 (4 classes), ₹5500 (8 classes)", "Room 108"],
-  ["Bharatnatyam", "Arupa Lahiry", "Saturday, Sunday", "4:30 to 5:30pm, 10:30 to 11:30am", "₹2500", "Room 109"],
-  ["Odissi", "Subrata Tripathy", "Thursday", "3:30 to 5:00pm", "₹2000 (4 classes/month)", "Room 110"],
-  ["Piano & Voice", "Kinneret Prabhudas", "Mon to Thurs", "9:00 to 6:45pm", "₹2000 (45 min), ₹1500 (30 min)", "Room 111"],
-  ["Vocal & Sitar", "Sephali Maiti", "Tues & Fri", "5:00 to 6:00pm", "₹2000", "Room 112"],
-  ["Voice & Piano", "Subhiksha A.", "Fri", "—", "₹1200 (40 min)", "Room 113"],
-  ["Kathak", "Deepti Gupta", "Tues & Wed (Adv.), Sat & Sun (Adv.)", "5:00 to 6:00pm, 1:30 to 2:30pm", "₹2000 (kids), ₹2300 (adults)", "Room 114"],
-  ["Sculpture", "Javed Hussain", "Sat & Sun", "10:30 to 12:30pm", "₹2500 (8 classes/month)", "Room 115"],
-  ["Zumba Fitness", "Shivani", "Thurs & Sat", "5:00 to 6:00pm", "₹2000 (4 classes), ₹3500 (8 classes)", "Room 116"]
+  ["Bharatnatyam", "Meenakshi Rao", "Saturday, Sunday", "8:30 to 10:30am, 9:30 to 11:30am, 11:00 to 12:00pm", "₹2800 (8 classes/month)", "", "Group"],
+  ["Hindustani Vocal", "Akansha", "Sat & Sun", "10:00 to 11:00am", "₹3000, ₹1200/hr (individual)", "", "Both"],
+  ["Dance Fitness", "Ajay Soni", "Mon, Wed, Fri", "6:15 to 7:15pm", "₹3500 (8 classes), ₹4500 (12 classes)", "", "Group"],
+  ["Yoga", "—", "Tues & Thurs", "6:00 to 7:00pm", "₹3000 (8 classes/month)", "", "Group"],
+  ["Karate", "Tarun Chakravarty", "Mon & Thurs", "5:00 to 6:00pm", "₹2000 (8 classes/month)", "", "Group"],
+  ["Creative Writing", "Kiran Mishra", "Saturday, Sunday", "11:00 to 12:00pm, 3:00 to 4:00pm", "₹2000 (4 classes), ₹700/hr, ₹1000/hr", "", "Both"],
+  ["Tabla", "Bijoy Mandal", "Wed & Fri, Sat", "5:00 to 6:00pm, 10:30 to 12:00pm", "₹2000, ₹4500 (8 classes/month)", "", "Both"],
+  ["Ballet", "Komal", "Thurs & Sat", "4:00 to 5:00pm, 5:00 to 6:00pm", "₹3000 (4 classes), ₹5500 (8 classes)", "", "Group"],
+  ["Bharatnatyam", "Arupa Lahiry", "Saturday, Sunday", "4:30 to 5:30pm, 10:30 to 11:30am", "₹2500", "", "Group"],
+  ["Odissi", "Subrata Tripathy", "Thursday", "3:30 to 5:00pm", "₹2000 (4 classes/month)", "", "Group"],
+  ["Piano & Voice", "Kinneret Prabhudas", "Mon to Thurs", "9:00 to 6:45pm", "₹2000 (45 min), ₹1500 (30 min)", "", "Individual"],
+  ["Vocal & Sitar", "Sephali Maiti", "Tues & Fri", "5:00 to 6:00pm", "₹2000", "", "Group"],
+  ["Voice & Piano", "Subhiksha A.", "Fri", "—", "₹1200 (40 min)", "", "Individual"],
+  ["Kathak", "Deepti Gupta", "Tues & Wed (Adv.), Sat & Sun (Adv.)", "5:00 to 6:00pm, 1:30 to 2:30pm", "₹2000 (kids), ₹2300 (adults)", "", "Group"],
+  ["Sculpture", "Javed Hussain", "Sat & Sun", "10:30 to 12:30pm", "₹2500 (8 classes/month)", "", "Group"],
+  ["Zumba Fitness", "Shivani", "Thurs & Sat", "5:00 to 6:00pm", "₹2000 (4 classes), ₹3500 (8 classes)", "", "Group"],
+  ["Sitar", "—", "Tues", "4:00 to 5:00pm", "₹1500/class (individual), ₹4000 group", "", "Both"]
 ];
 
 window.onload = function populateTable() {
