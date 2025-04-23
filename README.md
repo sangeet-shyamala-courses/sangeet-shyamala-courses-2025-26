@@ -1,124 +1,117 @@
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PlusCircle, Settings } from "lucide-react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Management Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .table th, .table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    .table th {
+      background-color: #f2f2f2;
+    }
+    .search-input {
+      padding: 8px;
+      margin-bottom: 20px;
+      width: 300px;
+    }
+    .teacher-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .editable {
+      width: 100%;
+      border: none;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <h1>Class Management Dashboard</h1>
 
-const initialClasses = [
-  {
-    id: 1,
-    category: "Dance",
-    courseName: "Bharatnatyam",
-    teacherName: "Meenakshi Rao",
-    teacherImage: "https://via.placeholder.com/40",
-    timing: "Saturday: 8:30 to 10:30am, Sunday: 9:30 to 11:30am, 11:00 to 12:00pm",
-    room: "N/A",
-    fee: "Rs.2800 (8 classes in a month)"
-  },
-  {
-    id: 2,
-    category: "Music",
-    courseName: "Hindustani Vocal",
-    teacherName: "Akansha",
-    teacherImage: "https://via.placeholder.com/40",
-    timing: "Sat & Sun (Kids): 10:00 to 11:00am, Sat & Sun (Adults): 10:00 to 11:00pm",
-    room: "N/A",
-    fee: "Rs.3000/-, Individual: Rs.1200/hr"
-  },
-  {
-    id: 3,
-    category: "Fitness",
-    courseName: "Dance Fitness",
-    teacherName: "Ajay Soni",
-    teacherImage: "https://via.placeholder.com/40",
-    timing: "Mon, Wed, Fri: 6:15 to 7:15pm",
-    room: "N/A",
-    fee: "Rs.3500 (8 classes), Rs.4500 (12 classes)"
-  },
-  {
-    id: 4,
-    category: "Fitness",
-    courseName: "Yoga",
-    teacherName: "",
-    teacherImage: "https://via.placeholder.com/40",
-    timing: "Tues & Thurs: 6:00 to 07:00pm",
-    room: "N/A",
-    fee: "Rs.3000 (8 classes)"
-  }
-  // Add other entries as needed following the same pattern
-];
+  <input type="text" class="search-input" id="search" placeholder="Search by course or teacher..." onkeyup="filterTable()" />
 
-export default function ClassManagement() {
-  const [classes, setClasses] = useState(initialClasses);
-  const [search, setSearch] = useState("");
+  <table class="table" id="classTable">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Course Name</th>
+        <th>Teacher</th>
+        <th>Timing</th>
+        <th>Room</th>
+        <th>Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input class="editable" value="Dance"></td>
+        <td><input class="editable" value="Bharatnatyam"></td>
+        <td><img src="https://via.placeholder.com/40" class="teacher-img"><input class="editable" value="Meenakshi Rao"></td>
+        <td><input class="editable" value="Saturday: 8:30 to 10:30am, Sunday: 9:30 to 11:30am, 11:00 to 12:00pm"></td>
+        <td><input class="editable" value="N/A"></td>
+        <td><input class="editable" value="Rs.2800 (8 classes in a month)"></td>
+      </tr>
+      <tr>
+        <td><input class="editable" value="Music"></td>
+        <td><input class="editable" value="Hindustani Vocal"></td>
+        <td><img src="https://via.placeholder.com/40" class="teacher-img"><input class="editable" value="Akansha"></td>
+        <td><input class="editable" value="Sat & Sun (Kids): 10:00 to 11:00am, Sat & Sun (Adults): 10:00 to 11:00pm"></td>
+        <td><input class="editable" value="N/A"></td>
+        <td><input class="editable" value="Rs.3000/-, Individual: Rs.1200/hr"></td>
+      </tr>
+      <tr>
+        <td><input class="editable" value="Fitness"></td>
+        <td><input class="editable" value="Dance Fitness"></td>
+        <td><img src="https://via.placeholder.com/40" class="teacher-img"><input class="editable" value="Ajay Soni"></td>
+        <td><input class="editable" value="Mon, Wed, Fri: 6:15 to 7:15pm"></td>
+        <td><input class="editable" value="N/A"></td>
+        <td><input class="editable" value="Rs.3500 (8 classes), Rs.4500 (12 classes)"></td>
+      </tr>
+      <tr>
+        <td><input class="editable" value="Fitness"></td>
+        <td><input class="editable" value="Yoga"></td>
+        <td><img src="https://via.placeholder.com/40" class="teacher-img"><input class="editable" value=""></td>
+        <td><input class="editable" value="Tues & Thurs: 6:00 to 07:00pm"></td>
+        <td><input class="editable" value="N/A"></td>
+        <td><input class="editable" value="Rs.3000 (8 classes)"></td>
+      </tr>
+    </tbody>
+  </table>
 
-  const handleEdit = (id, field, value) => {
-    setClasses(classes.map(cls => cls.id === id ? { ...cls, [field]: value } : cls));
-  };
+  <script>
+    function filterTable() {
+      const input = document.getElementById("search");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("classTable");
+      const trs = table.getElementsByTagName("tr");
 
-  const filteredClasses = classes.filter(cls =>
-    cls.courseName.toLowerCase().includes(search.toLowerCase()) ||
-    cls.teacherName.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Class Management Dashboard</h1>
-        <Button variant="outline">
-          <Settings className="w-5 h-5 mr-2" /> Settings
-        </Button>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <Input placeholder="Search by course or teacher..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        <Button>
-          <PlusCircle className="w-5 h-5 mr-2" /> Add New Class
-        </Button>
-      </div>
-
-      <Card>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Category</TableHead>
-                <TableHead>Course Name</TableHead>
-                <TableHead>Teacher</TableHead>
-                <TableHead>Timing</TableHead>
-                <TableHead>Room</TableHead>
-                <TableHead>Fee</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredClasses.map(cls => (
-                <TableRow key={cls.id}>
-                  <TableCell>
-                    <Input value={cls.category} onChange={e => handleEdit(cls.id, "category", e.target.value)} />
-                  </TableCell>
-                  <TableCell>
-                    <Input value={cls.courseName} onChange={e => handleEdit(cls.id, "courseName", e.target.value)} />
-                  </TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    <img src={cls.teacherImage} alt={cls.teacherName} className="w-10 h-10 rounded-full" />
-                    <Input value={cls.teacherName} onChange={e => handleEdit(cls.id, "teacherName", e.target.value)} />
-                  </TableCell>
-                  <TableCell>
-                    <Input value={cls.timing} onChange={e => handleEdit(cls.id, "timing", e.target.value)} />
-                  </TableCell>
-                  <TableCell>
-                    <Input value={cls.room} onChange={e => handleEdit(cls.id, "room", e.target.value)} />
-                  </TableCell>
-                  <TableCell>
-                    <Input value={cls.fee || ""} onChange={e => handleEdit(cls.id, "fee", e.target.value)} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+      for (let i = 1; i < trs.length; i++) {
+        let show = false;
+        const tds = trs[i].getElementsByTagName("td");
+        for (let j = 0; j < tds.length; j++) {
+          const input = tds[j].getElementsByTagName("input")[0];
+          if (input && input.value.toLowerCase().includes(filter)) {
+            show = true;
+            break;
+          }
+        }
+        trs[i].style.display = show ? "" : "none";
+      }
+    }
+  </script>
+</body>
+</html>
