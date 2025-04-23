@@ -4,7 +4,7 @@
     background-size: cover;
     font-family: Arial, sans-serif;
     padding: 20px;
-    transition: background-color 0.5s ease, background-image 0.5s ease;
+    transition: background-color 0.5s ease;
   }
   h1 {
     text-align: center;
@@ -18,10 +18,6 @@
     max-width: 200px;
     height: auto;
     cursor: pointer;
-    transition: transform 0.3s;
-  }
-  .logo-container img:hover {
-    transform: scale(1.05);
   }
   .category-menu {
     text-align: center;
@@ -34,30 +30,50 @@
     padding: 8px 16px;
     background: rgba(255,255,255,0.8);
     border-radius: 8px;
-    transition: background 0.3s, transform 0.3s;
+    transition: background 0.3s;
   }
   .category-menu span:hover {
     background: rgba(255,255,255,1);
-    transform: translateY(-2px);
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  .controls {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .controls input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    margin-right: 10px;
+  }
+  .controls button {
+    padding: 10px 20px;
+  }
+  .controls label {
+    margin-right: 10px;
+  }
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .course-card {
     background-color: white;
+    padding: 15px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s;
   }
-  th, td {
-    border: 1px solid #ccc;
-    padding: 12px;
-    text-align: left;
+  .course-card:hover {
+    transform: translateY(-5px);
   }
-  th {
-    background-color: #f7f9fc;
+  .course-card div[contenteditable] {
+    border-bottom: 1px solid #ddd;
+    padding: 4px;
   }
-  tr:hover {
-    background-color: #eef3f7;
+  .course-card button {
+    align-self: flex-end;
   }
 </style>
 
@@ -75,69 +91,40 @@
   <span onclick="filterCategory('writing')">✍️ Writing Classes</span>
 </div>
 
-<div style="text-align:center; margin-bottom: 20px;">
+<div class="controls">
   <label for="bgColorPicker">Change Background Color:</label>
   <input type="color" id="bgColorPicker" onchange="document.body.style.backgroundColor = this.value">
+  <br><br>
+  <input type="text" id="searchBox" placeholder="Search for a course..." onkeyup="searchCourse()">
+  <button onclick="addNewCard()">Add New</button>
 </div>
 
-<input type="text" id="searchBox" placeholder="Search for a course..." onkeyup="searchCourse()" style="padding:10px;width:300px;margin-bottom:20px;">
-<button onclick="addNewRow()" style="padding:10px 20px;margin-left:10px;">Add New Row</button>
-
-<table id="courseTable">
-  <thead>
-    <tr>
-      <th>Course</th>
-      <th>Instructor</th>
-      <th>Days</th>
-      <th>Time</th>
-      <th>Fee</th>
-      <th>Room No.</th>
-      <th>Type</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="tableBody">
-  </tbody>
-</table>
+<div class="course-grid" id="courseGrid"></div>
 
 <script>
 function searchCourse() {
   let input = document.getElementById("searchBox").value.toLowerCase();
-  let rows = document.querySelectorAll("#courseTable tbody tr");
-  let matchCount = 0;
-  rows.forEach(row => {
-    const rowText = row.textContent.toLowerCase();
-    if (rowText.includes(input)) {
-      row.style.display = "";
-      matchCount++;
-    } else {
-      row.style.display = "none";
-    }
+  let cards = document.querySelectorAll(".course-card");
+  cards.forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(input) ? "block" : "none";
   });
-  if (matchCount === 0 && !document.getElementById("noMatchRow")) {
-    const tr = document.createElement("tr");
-    tr.id = "noMatchRow";
-    tr.innerHTML = `<td colspan="8" style="text-align:center; padding: 20px;">No matching courses found.</td>`;
-    document.getElementById("tableBody").appendChild(tr);
-  } else if (matchCount > 0 && document.getElementById("noMatchRow")) {
-    document.getElementById("noMatchRow").remove();
-  }
 }
 
-function addNewRow() {
-  const table = document.getElementById("tableBody");
-  const newRow = document.createElement("tr");
-  newRow.innerHTML = `
-    <td contenteditable="true">New Course</td>
-    <td contenteditable="true">Instructor</td>
-    <td contenteditable="true">Days</td>
-    <td contenteditable="true">Time</td>
-    <td contenteditable="true">Fee</td>
-    <td contenteditable="true">Room No.</td>
-    <td contenteditable="true">Group/Individual</td>
-    <td><button onclick="alert('Changes saved!')">Save</button></td>
+function addNewCard() {
+  const grid = document.getElementById("courseGrid");
+  const card = document.createElement("div");
+  card.className = "course-card";
+  card.innerHTML = `
+    <div contenteditable="true">Course Name</div>
+    <div contenteditable="true">Instructor</div>
+    <div contenteditable="true">Days</div>
+    <div contenteditable="true">Time</div>
+    <div contenteditable="true">Fee</div>
+    <div contenteditable="true">Room No.</div>
+    <div contenteditable="true">Group/Individual</div>
+    <button onclick="alert('Changes saved!')">Save</button>
   `;
-  table.appendChild(newRow);
+  grid.appendChild(card);
 }
 
 function changeLogo() {
@@ -156,36 +143,56 @@ function changeLogo() {
 }
 
 function filterCategory(type) {
-  const rows = document.querySelectorAll("#tableBody tr");
-  rows.forEach(row => {
-    const course = row.cells[0]?.textContent.toLowerCase() || "";
+  const cards = document.querySelectorAll(".course-card");
+  cards.forEach(card => {
+    const text = card.innerText.toLowerCase();
     const matches = {
-      music: /vocal|tabla|piano|sitar|voice/.test(course),
-      dance: /dance|ballet|kathak|odissi|bharatnatyam|salsa/.test(course),
-      fitness: /fitness|yoga|karate|zumba/.test(course),
-      art: /painting|sculpture|art/.test(course),
-      writing: /writing/.test(course),
+      music: /vocal|tabla|piano|sitar|voice/.test(text),
+      dance: /dance|ballet|kathak|odissi|bharatnatyam|salsa/.test(text),
+      fitness: /fitness|yoga|karate|zumba/.test(text),
+      art: /painting|sculpture|art/.test(text),
+      writing: /writing/.test(text),
     };
-    row.style.display = matches[type] ? "" : "none";
+    card.style.display = matches[type] ? "block" : "none";
   });
 }
 
-const courseData = [...]; // (same as before)
+const courseData = [
+  ["Bharatnatyam", "Meenakshi Rao", "Saturday, Sunday", "8:30 to 10:30am, 9:30 to 11:30am, 11:00 to 12:00pm", "₹2800 (8 classes/month)", "", "Group"],
+  ["Hindustani Vocal", "Akansha", "Sat & Sun", "10:00 to 11:00am", "₹3000, ₹1200/hr (individual)", "", "Both"],
+  ["Dance Fitness", "Ajay Soni", "Mon, Wed, Fri", "6:15 to 7:15pm", "₹3500 (8 classes), ₹4500 (12 classes)", "", "Group"],
+  ["Yoga", "—", "Tues & Thurs", "6:00 to 7:00pm", "₹3000 (8 classes/month)", "", "Group"],
+  ["Karate", "Tarun Chakravarty", "Mon & Thurs", "5:00 to 6:00pm", "₹2000 (8 classes/month)", "", "Group"],
+  ["Creative Writing", "Kiran Mishra", "Saturday, Sunday", "11:00 to 12:00pm, 3:00 to 4:00pm", "₹2000 (4 classes), ₹700/hr, ₹1000/hr", "", "Both"],
+  ["Tabla", "Bijoy Mandal", "Wed & Fri, Sat", "5:00 to 6:00pm, 10:30 to 12:00pm", "₹2000, ₹4500 (8 classes/month)", "", "Both"],
+  ["Ballet", "Komal", "Thurs & Sat", "4:00 to 5:00pm, 5:00 to 6:00pm", "₹3000 (4 classes), ₹5500 (8 classes)", "", "Group"],
+  ["Bharatnatyam", "Arupa Lahiry", "Saturday, Sunday", "4:30 to 5:30pm, 10:30 to 11:30am", "₹2500", "", "Group"],
+  ["Odissi", "Subrata Tripathy", "Thursday", "3:30 to 5:00pm", "₹2000 (4 classes/month)", "", "Group"],
+  ["Piano & Voice", "Kinneret Prabhudas", "Mon to Thurs", "9:00 to 6:45pm", "₹2000 (45 min), ₹1500 (30 min)", "", "Individual"],
+  ["Vocal & Sitar", "Sephali Maiti", "Tues & Fri", "5:00 to 6:00pm", "₹2000", "", "Group"],
+  ["Voice & Piano", "Subhiksha A.", "Fri", "—", "₹1200 (40 min)", "", "Individual"],
+  ["Kathak", "Deepti Gupta", "Tues & Wed (Adv.), Sat & Sun (Adv.)", "5:00 to 6:00pm, 1:30 to 2:30pm", "₹2000 (kids), ₹2300 (adults)", "", "Group"],
+  ["Sculpture", "Javed Hussain", "Sat & Sun", "10:30 to 12:30pm", "₹2500 (8 classes/month)", "", "Group"],
+  ["Zumba Fitness", "Shivani", "Thurs & Sat", "5:00 to 6:00pm", "₹2000 (4 classes), ₹3500 (8 classes)", "", "Group"],
+  ["Sitar", "—", "Tues", "4:00 to 5:00pm", "₹1500/class (individual), ₹4000 group", "", "Both"]
+];
 
-window.onload = function populateTable() {
-  const table = document.getElementById("tableBody");
+window.onload = function populateGrid() {
+  const grid = document.getElementById("courseGrid");
   courseData.forEach(row => {
-    const tr = document.createElement("tr");
+    const card = document.createElement("div");
+    card.className = "course-card";
     row.forEach(cell => {
-      const td = document.createElement("td");
-      td.textContent = cell;
-      td.contentEditable = true;
-      tr.appendChild(td);
+      const div = document.createElement("div");
+      div.textContent = cell;
+      div.contentEditable = true;
+      card.appendChild(div);
     });
-    const action = document.createElement("td");
-    action.innerHTML = '<button onclick="alert(\'Changes saved!\')">Save</button>';
-    tr.appendChild(action);
-    table.appendChild(tr);
+    const button = document.createElement("button");
+    button.textContent = "Save";
+    button.onclick = () => alert("Changes saved!");
+    card.appendChild(button);
+    grid.appendChild(card);
   });
 };
 </script>
